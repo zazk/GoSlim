@@ -1,4 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-const App = () => 'Go Slimmer';
-ReactDOM.render(<App />, document.getElementById('root'));
+
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import logger from 'redux-logger';
+import thunk from 'redux-thunk';
+import reducers from './state/reducers';
+import { App } from './App';
+
+import '../node_modules/materialize-css/dist/css/materialize.min.css';
+
+const store = createStore(reducers, {}, applyMiddleware(thunk, logger));
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+);
