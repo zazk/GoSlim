@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import * as actions from '../state/actions';
@@ -16,9 +16,9 @@ class ToDoList extends Component {
 
   handleFormSubmit = event => {
     const { addFormValue } = this.state;
-    const { addToDo } = this.props;
+    const { addToDo, auth } = this.props;
     event.preventDefault();
-    addToDo({ title: addFormValue });
+    addToDo({ title: addFormValue }, auth.uid);
     this.setState({ addFormValue: '' });
   };
 
@@ -53,20 +53,22 @@ class ToDoList extends Component {
       return toDos;
     }
     return (
-      <div className="col s10 offset-s1 center-align">
-        <img
-          alt="Nothing was found"
-          id="nothing-was-found"
-          src="/img/nothing.png"
-        />
-        <h4>You have completed all the tasks</h4>
-        <p>Start by clicking add button in the bottom of the screen</p>
-      </div>
+      <Fragment>
+        {!this.state.addFormVisible && (
+          <div className="col s10 offset-s1 center-align">
+            <i className="material-icons">close</i>
+            <div>No task was found.</div>
+            <h4>You have completed all the tasks</h4>
+            <p>Start by clicking add button in the bottom of the screen</p>
+          </div>
+        )}
+      </Fragment>
     );
   }
 
   componentWillMount() {
-    this.props.fetchToDos();
+    const { auth } = this.props;
+    this.props.fetchToDos(auth.uid);
   }
 
   render() {
@@ -94,9 +96,10 @@ class ToDoList extends Component {
   }
 }
 
-const mapStateToProps = ({ data }) => {
+const mapStateToProps = ({ data, auth }) => {
   return {
-    data
+    data,
+    auth
   };
 };
 
